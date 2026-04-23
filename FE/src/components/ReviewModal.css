@@ -1,0 +1,158 @@
+/* ==================== REVIEW MODAL ==================== */
+.review-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.review-modal-content {
+  position: relative;
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.review-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #999;
+}
+
+.review-modal-close:hover {
+  color: #d81473;
+}
+
+.review-modal-title {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.review-rating-section,
+.review-price-section,
+.review-comment-section {
+  margin-bottom: 1.5rem;
+}
+
+.review-label {
+  display: block;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.review-stars {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.review-star {
+  font-size: 2rem;
+  cursor: pointer;
+  color: #ddd;
+  transition: color 0.2s;
+}
+
+.review-star.active {
+  color: #d81473;
+}
+
+.review-select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 1rem;
+  outline: none;
+}
+
+.review-select:focus {
+  border-color: #d81473;
+}
+
+.review-textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 1rem;
+  resize: vertical;
+  font-family: inherit;
+  outline: none;
+}
+
+.review-textarea:focus {
+  border-color: #d81473;
+}
+
+.review-error {
+  background-color: #ffe5e5;
+  color: #d81473;
+  padding: 0.8rem;
+  border-radius: 10px;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.review-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.review-submit-btn {
+  flex: 1;
+  background-color: #d81473;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.8rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.review-submit-btn:hover {
+  background-color: #9e064f;
+}
+
+.review-delete-btn {
+  flex: 1;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.8rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.review-delete-btn:hover {
+  background-color: #d32f2f;
+}
+
+.review-submit-btn:disabled,
+.review-delete-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

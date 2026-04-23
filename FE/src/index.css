@@ -1,0 +1,85 @@
+/* ==================== GLOBAL STYLES ==================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+#root {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Container for all pages */
+.app-container {
+  max-width: 100%;
+  overflow-x: hidden;
+  padding: 0 16px;
+}
+
+@media (min-width: 768px) {
+  .app-container {
+    padding: 0 24px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+}
+
+/* ==================== GLOBAL LAYOUT FIX ==================== */
+
+/* Make all main content containers match navbar width */
+.home-container,
+.results-container,
+.top-picks-page,
+.favourite-container,
+.profile-container,
+.reset-container,
+.signup-container,
+.admin-requests-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+/* Fix for store cards - prevent them from stretching too wide */
+
+
+/* Ensure cards don't overflow */
+.store-card {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .home-container,
+  .results-container,
+  .top-picks-page,
+  .favourite-container,
+  .profile-container,
+  .reset-container,
+  .signup-container,
+  .admin-requests-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  
+}

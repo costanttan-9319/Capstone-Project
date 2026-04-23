@@ -1,0 +1,174 @@
+/* ==================== NAVBAR CONTAINER ==================== */
+.navbar {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 0.75rem 2rem;
+}
+
+/* ==================== INNER CONTAINER ==================== */
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ==================== LOGO SECTION ==================== */
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.logo-icon {
+  font-size: 2rem;
+  color: #d81473;
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #d81473;
+}
+
+/* ==================== NAVIGATION LINKS ==================== */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 10.5px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  padding: 0.5rem 0.75rem;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #d81473;
+}
+
+/* ==================== ACTIVE LINK STYLES ==================== */
+.nav-link.active {
+  color: #d81473;
+  font-weight: 1;
+}
+
+
+.btn-login.active, .btn-profile.active {
+  background-color: #9e064f;
+  color: white;
+}
+
+/* ==================== AUTH BUTTONS ==================== */
+.btn-login, .btn-logout {
+  background-color: #d81473;
+  color: white;
+  border-radius: 8px;
+  padding: 0.5rem 1.25rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* ==================== PROFILE BUTTON STYLING ==================== */
+.btn-profile {
+  background-color: #d81473;
+  color: white;
+  border-radius: 8px;
+  padding: 0.5rem 1.25rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-profile:hover {
+  background-color: #9e064f;
+  color: white;
+}
+
+/* ==================== LAYERED CONTAINER ==================== */
+.top-picks-wrapper {
+  position: relative; /* The base layer */
+  display: flex;
+  align-items: center;
+}
+
+/* Front layer: The emoji floating on top */
+.fire-emoji {
+  position: absolute;
+  top: -2px;    /* Floating above the text layer */
+  right: -3px;  /* Offset to the right */
+  font-size: 0.9rem;
+  pointer-events: none; /* Allows clicks to pass through to the link below */
+  z-index: 2;    /* Ensures it stays on the top layer */
+}
+
+/* Back layer: The clickable link */
+.top-picks-wrapper .nav-link {
+  z-index: 1;
+  padding-right: 5px; /* Creates a tiny bit of breathing room */
+}
+
+
+.btn-login:hover, .btn-logout:hover {
+  background-color: #9e064f;
+  color: white;
+}
+
+/* ==================== FAVORITE ICON STYLING ==================== */
+.fav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d81473 !important;
+  transition: transform 0.2s ease;
+  padding: 0.5rem 1px;  /* Match other nav-links padding */
+}
+
+.fav-icon svg {
+  font-size: 1.3rem;  /* Slightly smaller to match text height */
+}
+
+.fav-icon:hover {
+  transform: scale(1.1);
+  color: #9e064f !important;
+}
+
+
+.fav-icon:hover {
+  transform: scale(1.2); /* Gives a nice little "pop" on hover */
+  color: #9e064f !important; /* Darker berry color on hover */
+}
+
+/* Optional: Ensure the icon size matches the text height */
+.fav-icon svg {
+  font-size: 1.5rem;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .nav-links {
+    gap: 0.75rem;
+  }
+  
+  .nav-link {
+    font-size: 0.875rem;
+    padding: 0.5rem;
+  }
+  
+  .logo-text {
+    font-size: 1.2rem;
+  }
+  
+  .logo-icon {
+    font-size: 1.5rem;
+  }
+}
