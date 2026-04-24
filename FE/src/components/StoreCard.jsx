@@ -24,8 +24,9 @@ const StoreCard = ({ store, onEdit, onDelete, onToggleTopPick }) => {
   
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { currentDay, getStoreStatus } = useTime();
-  const normalStatus = getStoreStatus(store.opening_hours);
+  const { currentDay, getStoreStatus, getDisplayDay } = useTime();
+const normalStatus = getStoreStatus(store.opening_hours);
+const displayDay = getDisplayDay(store.opening_hours);
   const [isFaved, setIsFaved] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -709,7 +710,7 @@ const StoreCard = ({ store, onEdit, onDelete, onToggleTopPick }) => {
                 "Sunday",
               ].map((day) => {
                 const hoursData = (store.opening_hours || {})[day];
-                const isToday = day === currentDay;
+                const isToday = day === displayDay;
                 let displayTime = "Closed";
 
                 if (hoursData && typeof hoursData === "object") {

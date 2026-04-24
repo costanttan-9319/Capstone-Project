@@ -226,8 +226,13 @@
   font-weight: bold;
 }
 
+.hours-row.is-today .day-name,
+.hours-row.is-today .day-time {
+  font-weight: bold;
+}
+
 .day-name {
-  font-weight: 500;
+  font-weight: 90;
 }
 
 /* Google Maps Button */
