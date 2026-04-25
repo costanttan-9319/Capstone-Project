@@ -6,7 +6,10 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "seed": "node scripts/seedStores.js"
+    "seed": "node scripts/seedStores.js",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run"
   },
   "dependencies": {
     "axios": "^1.14.0",
@@ -19,6 +22,8 @@
     "nodemailer": "^8.0.5"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "vitest": "^4.1.5",
+    "@vitest/ui": "^4.1.5"
   }
 }
