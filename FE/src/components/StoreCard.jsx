@@ -21,47 +21,56 @@ import "./StoreCard.css";
 // ==================== STORE CARD COMPONENT ====================
 const StoreCard = ({ store, onEdit, onDelete, onToggleTopPick }) => {
   console.log("🃏 StoreCard rendering for store:", store?.id, store?.name);
-  
+
   const navigate = useNavigate();
   const { user } = useAuth();
   const { currentDay, getStoreStatus, getDisplayDay } = useTime();
-const normalStatus = getStoreStatus(store.opening_hours);
-const displayDay = getDisplayDay(store.opening_hours);
+  const normalStatus = getStoreStatus(store.opening_hours);
+  const displayDay = getDisplayDay(store.opening_hours);
   const [isFaved, setIsFaved] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [isTogglingTopPick, setIsTogglingTopPick] = useState(false);
   const [imgError, setImgError] = useState(false);
   const [localTopPick, setLocalTopPick] = useState(store.is_top_pick);
-  
+
   // ==================== IMAGE CAROUSEL STATE ====================
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  
+
   console.log("📸 Store images:", store.images);
   console.log("⭐ Is Top Pick:", localTopPick);
   console.log("👤 User role:", user?.role);
   console.log("🖼️ Store image_path:", store.image_path);
-  
+
   // Priority: Custom images first, then database image_path as single image
-  const storeImages = (store.images?.length > 0) ? store.images : (store.image_path ? [store.image_path] : []);
+  const storeImages =
+    store.images?.length > 0
+      ? store.images
+      : store.image_path
+        ? [store.image_path]
+        : [];
   const hasMultipleImages = storeImages.length > 1;
-  
+
   console.log("🖼️ Store images array:", storeImages);
   console.log("🎠 Has multiple images:", hasMultipleImages);
 
   // Fallback placeholder image (DATA URI - guaranteed to work, no internet needed)
-  const FALLBACK_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999' font-size='14'%3E📷 No Image%3C/text%3E%3C/svg%3E";
+  const FALLBACK_IMAGE =
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999' font-size='14'%3E📷 No Image%3C/text%3E%3C/svg%3E";
 
   // Get current image URL with database fallback (custom images → database image_path → placeholder)
   const getCurrentImageUrl = () => {
     console.log("🔍 Getting current image, imgError:", imgError);
     console.log("📸 store.image_path:", store.image_path);
     console.log("🖼️ storeImages array:", storeImages);
-    
+
     // If custom image failed to load, try database image_path as fallback
     if (imgError) {
       if (store.image_path) {
-        console.log("⚠️ Custom image failed, falling back to database image_path:", store.image_path);
+        console.log(
+          "⚠️ Custom image failed, falling back to database image_path:",
+          store.image_path,
+        );
         // Reset error state for the fallback image
         setTimeout(() => setImgError(false), 100);
         return store.image_path;
@@ -69,19 +78,19 @@ const displayDay = getDisplayDay(store.opening_hours);
       console.log("⚠️ No database fallback, using placeholder");
       return FALLBACK_IMAGE;
     }
-    
+
     // First priority: Custom images from store.images (carousel)
     if (storeImages.length > 0 && storeImages[currentImageIndex]) {
       console.log("✅ Using custom image:", storeImages[currentImageIndex]);
       return storeImages[currentImageIndex];
     }
-    
+
     // Second priority: Database image_path (single Google image from seeding)
     if (store.image_path) {
       console.log("✅ Using database image_path:", store.image_path);
       return store.image_path;
     }
-    
+
     // Last resort: No image placeholder
     console.log("⚠️ No images at all, using fallback");
     return FALLBACK_IMAGE;
@@ -95,7 +104,11 @@ const displayDay = getDisplayDay(store.opening_hours);
 
   // Reset image error when index changes
   useEffect(() => {
-    console.log("🔄 Image index changed to:", currentImageIndex, "- resetting error state");
+    console.log(
+      "🔄 Image index changed to:",
+      currentImageIndex,
+      "- resetting error state",
+    );
     setImgError(false);
   }, [currentImageIndex, store.id]);
 
@@ -119,7 +132,8 @@ const displayDay = getDisplayDay(store.opening_hours);
     console.log("⬅️ Previous image button clicked");
     e.stopPropagation();
     if (storeImages.length > 0) {
-      const newIndex = (currentImageIndex - 1 + storeImages.length) % storeImages.length;
+      const newIndex =
+        (currentImageIndex - 1 + storeImages.length) % storeImages.length;
       console.log("Moving from index", currentImageIndex, "to", newIndex);
       setCurrentImageIndex(newIndex);
     }
@@ -144,8 +158,13 @@ const displayDay = getDisplayDay(store.opening_hours);
 
   // ==================== SMART STATUS LOGIC ====================
   const getDisplayDetails = () => {
-    console.log("🎨 Getting display details for status:", specialStatus, "normalStatus:", normalStatus);
-    
+    console.log(
+      "🎨 Getting display details for status:",
+      specialStatus,
+      "normalStatus:",
+      normalStatus,
+    );
+
     // 1. DATABASE OVERRIDES
     if (specialStatus === "Temporarily Closed") {
       console.log("🔴 Status: Temporarily Closed");
@@ -181,34 +200,37 @@ const displayDay = getDisplayDay(store.opening_hours);
   const { text: displayText, color: pillColor } = getDisplayDetails();
 
   // ==================== PERMISSIONS ====================
-   // ==================== PERMISSIONS ====================
+  // ==================== PERMISSIONS ====================
   const isAdmin = user?.role === "admin";
   const isPrimaryOwner = user && Number(store.owner_id) === Number(user.id);
   const isCoOwner = store.is_co_owner === true;
   const isOwner = isPrimaryOwner || isCoOwner;
-  
+
   console.log("👑 Is Admin:", isAdmin);
   console.log("🔑 Is Primary Owner:", isPrimaryOwner);
   console.log("👥 Is Co-owner:", isCoOwner);
   console.log("✅ Is Owner (can edit):", isOwner);
 
   // ==================== TRUNCATE NAME ====================
-  const displayName = store.name.length > 18 ? store.name.substring(0, 18) + "..." : store.name;
+  const displayName =
+    store.name.length > 18 ? store.name.substring(0, 18) + "..." : store.name;
 
   // ==================== SHARE FUNCTION ====================
   const handleShare = (e) => {
     e.stopPropagation();
     const url = `${window.location.origin}/store/${store.id}`;
     navigator.clipboard.writeText(url);
-    alert('Link copied! Share with friends!');
+    alert("Link copied! Share with friends!");
   };
 
   // ==================== ADMIN DELETE LOGIC ====================
   const handleDelete = async (e) => {
     console.log("🗑️ Delete button clicked for store:", store.id);
     e.stopPropagation();
-    const confirmed = window.confirm(`Are you sure you want to PERMANENTLY delete "${store.name}"? This cannot be undone.`);
-    
+    const confirmed = window.confirm(
+      `Are you sure you want to PERMANENTLY delete "${store.name}"? This cannot be undone.`,
+    );
+
     if (confirmed) {
       console.log("✅ Delete confirmed");
       try {
@@ -230,36 +252,40 @@ const displayDay = getDisplayDay(store.opening_hours);
     console.log("⭐ Top Pick button clicked for store:", store.id);
     console.log("Current Top Pick status:", localTopPick);
     e.stopPropagation();
-    
+
     if (!isAdmin) {
       console.log("🚫 User is not admin, cannot toggle Top Pick");
       return;
     }
-    
+
     // OPTIMISTIC UPDATE - Update UI immediately
     const newTopPickStatus = !localTopPick;
     console.log("🔄 New Top Pick status will be:", newTopPickStatus);
-    
+
     // Update local state immediately (UI updates instantly)
     setLocalTopPick(newTopPickStatus);
-    
+
     setIsTogglingTopPick(true);
-    
+
     try {
-      console.log("📡 Sending PUT request to /stores/${store.id}/top-pick with:", { is_top_pick: newTopPickStatus });
-      
-      const response = await api.put(`/stores/${store.id}/top-pick`, { is_top_pick: newTopPickStatus });
+      console.log(
+        "📡 Sending PUT request to /stores/${store.id}/top-pick with:",
+        { is_top_pick: newTopPickStatus },
+      );
+
+      const response = await api.put(`/stores/${store.id}/top-pick`, {
+        is_top_pick: newTopPickStatus,
+      });
       console.log("✅ API response:", response.data);
-      
+
       // Notify parent component if callback exists
       if (onToggleTopPick) {
         onToggleTopPick(store.id, newTopPickStatus);
       }
-      
     } catch (error) {
       console.error("❌ Toggle Top Pick error:", error);
       console.error("Error response:", error.response);
-      
+
       // Revert on error
       setLocalTopPick(!newTopPickStatus);
       alert("Failed to update Top Pick status");
@@ -363,7 +389,7 @@ const displayDay = getDisplayDay(store.opening_hours);
 
   // ==================== RENDER ====================
   console.log("🎨 Rendering StoreCard UI");
-  
+
   return (
     <>
       <div
@@ -379,7 +405,7 @@ const displayDay = getDisplayDay(store.opening_hours);
             onError={handleImageError}
             referrerPolicy="no-referrer"
           />
-          
+
           {/* Carousel Navigation Arrows */}
           {hasMultipleImages && !imgError && (
             <>
@@ -402,7 +428,7 @@ const displayDay = getDisplayDay(store.opening_hours);
                   cursor: "pointer",
                   color: "white",
                   zIndex: 10,
-                  backdropFilter: "blur(4px)"
+                  backdropFilter: "blur(4px)",
                 }}
               >
                 <ChevronLeftIcon />
@@ -426,14 +452,14 @@ const displayDay = getDisplayDay(store.opening_hours);
                   cursor: "pointer",
                   color: "white",
                   zIndex: 10,
-                  backdropFilter: "blur(4px)"
+                  backdropFilter: "blur(4px)",
                 }}
               >
                 <ChevronRightIcon />
               </button>
             </>
           )}
-          
+
           {/* Dot Indicators */}
           {hasMultipleImages && !imgError && (
             <div
@@ -449,7 +475,7 @@ const displayDay = getDisplayDay(store.opening_hours);
                 backgroundColor: "rgba(0,0,0,0.4)",
                 padding: "4px 8px",
                 borderRadius: "12px",
-                backdropFilter: "blur(4px)"
+                backdropFilter: "blur(4px)",
               }}
             >
               {storeImages.map((_, idx) => (
@@ -464,15 +490,18 @@ const displayDay = getDisplayDay(store.opening_hours);
                     width: "6px",
                     height: "6px",
                     borderRadius: "50%",
-                    backgroundColor: idx === currentImageIndex ? "#d81473" : "rgba(255,255,255,0.7)",
+                    backgroundColor:
+                      idx === currentImageIndex
+                        ? "#d81473"
+                        : "rgba(255,255,255,0.7)",
                     cursor: "pointer",
-                    transition: "all 0.2s"
+                    transition: "all 0.2s",
                   }}
                 />
               ))}
             </div>
           )}
-          
+
           {/* ADMIN BUTTONS */}
           {(isAdmin || isOwner) && (
             <button
@@ -568,7 +597,9 @@ const displayDay = getDisplayDay(store.opening_hours);
               <h3 className="store-card-name" style={{ fontSize: "1.1rem" }}>
                 {displayName}
                 {localTopPick && (
-                  <span style={{ marginLeft: "8px", fontSize: "14px" }}>⭐</span>
+                  <span style={{ marginLeft: "8px", fontSize: "14px" }}>
+                    ⭐
+                  </span>
                 )}
               </h3>
               <div className="cuisine-wrapper">
@@ -640,28 +671,40 @@ const displayDay = getDisplayDay(store.opening_hours);
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  style={{ textDecoration: "none", color: "inherit" }}
                 >
-                  <FacebookIcon className="icon-fb" style={{ color: '#1877f2' }} />
+                  <FacebookIcon
+                    className="icon-fb"
+                    style={{ color: "#1877f2" }}
+                  />
                 </a>
               ) : (
-                <FacebookIcon className="icon-fb" style={{ opacity: 0.5, cursor: 'not-allowed' }} />
+                <FacebookIcon
+                  className="icon-fb"
+                  style={{ opacity: 0.5, cursor: "not-allowed" }}
+                />
               )}
-              
+
               {instagramUrl ? (
                 <a
                   href={instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  style={{ textDecoration: "none", color: "inherit" }}
                 >
-                  <InstagramIcon className="icon-ig" style={{ color: '#e4405f' }} />
+                  <InstagramIcon
+                    className="icon-ig"
+                    style={{ color: "#e4405f" }}
+                  />
                 </a>
               ) : (
-                <InstagramIcon className="icon-ig" style={{ opacity: 0.5, cursor: 'not-allowed' }} />
+                <InstagramIcon
+                  className="icon-ig"
+                  style={{ opacity: 0.5, cursor: "not-allowed" }}
+                />
               )}
-              
+
               <div className="icon-xhs" style={{ fontSize: "10px" }}>
                 小红书
               </div>
@@ -670,29 +713,62 @@ const displayDay = getDisplayDay(store.opening_hours);
 
           {/* DESCRIPTION BOX WITH SHARE BUTTON ON SAME ROW */}
           <div className="description-section">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <h4 className="section-label" style={{ marginBottom: 0 }}>Description</h4>
-              <div 
-                className="share-btn" 
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "8px",
+              }}
+            >
+              <h4 className="section-label" style={{ marginBottom: 0 }}>
+                Description
+              </h4>
+              <div
+                className="share-btn"
                 onClick={handleShare}
-                style={{ 
-                  cursor: 'pointer', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '4px', 
-                  color: '#d81473',
-                  padding: '8px',
-                  minHeight: '44px',
-                  minWidth: '44px',
-                  borderRadius: '8px'
+                style={{
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  color: "#d81473",
+                  padding: "8px",
+                  minHeight: "44px",
+                  minWidth: "44px",
+                  borderRadius: "8px",
                 }}
               >
-                <TurnSlightRightIcon style={{ fontSize: '20px' }} />
-                <span style={{ fontSize: '12px' }}>Share</span>
+                <TurnSlightRightIcon style={{ fontSize: "20px" }} />
+                <span style={{ fontSize: "12px" }}>Share</span>
               </div>
             </div>
             <div className="description-text" style={{ fontSize: "13px" }}>
-              {store.description || "No description provided."}
+              {(() => {
+                if (!store.description) return "No description provided.";
+                const urlRegex = /(https?:\/\/[^\s]+)/g;
+                const parts = store.description.split(urlRegex);
+                return parts.map((part, index) => {
+                  if (part.match(urlRegex)) {
+                    return (
+                      <a
+                        key={index}
+                        href={part}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          color: "#d81473",
+                          textDecoration: "underline",
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {part}
+                      </a>
+                    );
+                  }
+                  return part;
+                });
+              })()}
             </div>
           </div>
 
