@@ -126,7 +126,7 @@ describe('EatWhere App', () => {
     expect(storeName).toBeInTheDocument();
   });
 
-  // ========= Test 4: User can favorite a store =========
+  // ========= Test 4: Logged-in user can favorite a store =========
   test('user can favorite a store', async () => {
     const mockStoreData = {
       tier_1_within_1km: [
