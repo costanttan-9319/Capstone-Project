@@ -44,13 +44,16 @@ beforeEach(() => {
   localStorage.setItem('user', JSON.stringify({ id: 1, username: 'testuser', role: 'user' }));
 });
 
+// ==================== TEST SUITE ====================
 describe('EatWhere App', () => {
 
+  // ========= Test 1: App renders without crashing (Smoke Test) =========
   test('renders without crashing', () => {
     render(<App />);
     expect(true).toBe(true);
   });
 
+  // ========= Test 2: Search by location displays store cards =========
   test('search by location displays store cards', async () => {
     const mockStoreData = {
       tier_1_within_1km: [
@@ -86,6 +89,7 @@ describe('EatWhere App', () => {
     expect(screen.getByText(/Italian/i)).toBeInTheDocument();
   });
 
+  // ========= Test 3: Store card displays store name =========
   test('store card displays store name after search', async () => {
     const mockStoreData = {
       tier_1_within_1km: [
@@ -122,6 +126,7 @@ describe('EatWhere App', () => {
     expect(storeName).toBeInTheDocument();
   });
 
+  // ========= Test 4: User can favorite a store =========
   test('user can favorite a store', async () => {
     const mockStoreData = {
       tier_1_within_1km: [
@@ -173,6 +178,7 @@ describe('EatWhere App', () => {
     expect(api.post).toHaveBeenCalledWith('/stores/42/favourite');
   });
 
+  // ========= Test 5: Try Me random pick =========
   test('try me button returns random store', async () => {
     const mockRandomStore = {
       id: 42,
@@ -206,6 +212,7 @@ describe('EatWhere App', () => {
     expect(storeName).toBeInTheDocument();
   });
 
+  // ========= Test 6: Overnight hours show correct bold day at 1am =========
   test('overnight hours show correct bold day at 1am', async () => {
     const mockStoreWithOvernight = {
       id: 42,
