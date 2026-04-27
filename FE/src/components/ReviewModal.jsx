@@ -155,7 +155,7 @@ const ReviewModal = ({ isOpen, onClose, storeId, onSuccess }) => {
 
           {/* Comment */}
           <div className="review-comment-section">
-            <label className="review-label">Feedback to Store (Optional)</label>
+            <label className="review-label">Comment (Optional)</label>
             <textarea
               className="review-textarea"
               rows="4"
