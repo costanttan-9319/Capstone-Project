@@ -50,6 +50,11 @@ Performance Targets: Optimized for sub-200ms API response times and under 1.5s F
 
 
 ## Getting Started
+
+## SQL Database set-up 
+bash in terminal: mysql -u root -p eatwhereapp_db < eatwhere_db.sql
+
+
 ## Default Admin Account (for testing)
 1. Clone the Repository. Open Terminal and bash:
  git clone [Your-GitHub-URL] cd EatWhereApp
