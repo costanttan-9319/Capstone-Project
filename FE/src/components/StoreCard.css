@@ -220,15 +220,16 @@
   justify-content: space-between;
   font-size: 0.66rem;
   margin-top: 5px;
+  color: #000000; 
 }
 
 .hours-row.is-today {
-  color: #d81473;
   font-weight: bold;
 }
 
 .hours-row.is-today .day-name,
 .hours-row.is-today .day-time {
+  color: #d81473 !important;
   font-weight: bold;
 }
 
