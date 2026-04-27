@@ -82,6 +82,9 @@ npm run dev
 
 Access the app at http://localhost:5173
 
+## To run test
+FE: bash terminal : cd FE npm test
+BE: cd BE npm test
 
 ## Project Status
 Current Phase: Logic & Script Construction (Working on script branch).
