@@ -20,10 +20,20 @@ export const AdminController = {
   // ==================== GET ALL REQUESTS ====================
   async getAllRequests(req, res) {
     try {
-      // This needs to be updated if you have an OwnershipRequest.getAllRequests method
-      const requests = await OwnershipRequest.getPendingRequests(); // TEMP: Use same for now
+      const requests = await OwnershipRequest.getPendingRequests();
       res.json(requests);
     } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  },
+
+  // ==================== GET PENDING REQUESTS COUNT ====================
+  async getPendingCount(req, res) {
+    try {
+      const count = await OwnershipRequest.getPendingCount();
+      res.json({ count });
+    } catch (err) {
+      console.error("🔴 [AdminController] Get pending count error:", err);
       res.status(500).json({ error: err.message });
     }
   },
@@ -43,8 +53,11 @@ export const AdminController = {
 
       // --- HANDLE REJECTION BRANCH ---
       if (status === "rejected") {
-        await db.execute("DELETE FROM ownership_requests WHERE id = ?", [id]);
-        return res.json({ message: "Request rejected and deleted" });
+        await db.execute(
+          "UPDATE ownership_requests SET status = 'rejected', notified = FALSE WHERE id = ?",
+          [id]
+        );
+        return res.json({ message: "Request rejected successfully" });
       }
 
       // --- HANDLE APPROVAL BRANCH ---
@@ -107,7 +120,6 @@ export const AdminController = {
       }
 
       // B2. ALWAYS add to store_owners bridge table (for both primary and co-owners)
-      // Check if already exists to avoid duplicate
       const [existingBridge] = await connection.execute(
         "SELECT id FROM store_owners WHERE user_id = ? AND store_id = ?",
         [request.user_id, finalStoreId]
@@ -124,9 +136,9 @@ export const AdminController = {
         console.log("🔴🔴🔴 [BACKEND] User already in store_owners, skipping insert");
       }
 
-      // C. Update ownership_requests status
+      // C. Update ownership_requests status with notified = FALSE
       const [requestUpdateResult] = await connection.execute(
-        "UPDATE ownership_requests SET status = 'approved' WHERE id = ?",
+        "UPDATE ownership_requests SET status = 'approved', notified = FALSE WHERE id = ?",
         [id]
       );
       console.log("🔴🔴🔴 [BACKEND] Request update result:", requestUpdateResult);
@@ -153,7 +165,7 @@ export const AdminController = {
     try {
       const { id } = req.params;
       await db.execute(
-        'UPDATE ownership_requests SET status = "rejected" WHERE id = ?',
+        'UPDATE ownership_requests SET status = "rejected", notified = FALSE WHERE id = ?',
         [id],
       );
       res.json({ message: "Request rejected successfully" });

@@ -44,7 +44,7 @@ export const OwnershipRequest = {
   // ==================== GET REQUESTS BY USER ====================
   async getByUserId(user_id) {
     const [rows] = await db.execute(
-      'SELECT * FROM ownership_requests WHERE user_id = ? ORDER BY created_at DESC',
+      'SELECT id, user_id, username, email, contact_number, store_name, store_address, id_type, passport_image, id_front_image, id_back_image, acra_image, status, admin_notes, created_at, updated_at, notified FROM ownership_requests WHERE user_id = ? ORDER BY created_at DESC',
       [user_id]
     );
     return rows;
@@ -58,6 +58,15 @@ export const OwnershipRequest = {
     );
     console.log("🔵 [Model] getPendingRequests found:", rows.length);
     return rows;
+  },
+
+    // ==================== GET PENDING REQUESTS COUNT (ADMIN) ====================
+  async getPendingCount() {
+    const [rows] = await db.execute(
+      "SELECT COUNT(*) as count FROM ownership_requests WHERE status = 'pending'"
+    );
+    console.log("🔵 [Model] Pending requests count:", rows[0].count);
+    return rows[0].count;
   },
 
   // ==================== UPDATE REQUEST STATUS (ADMIN) ====================

@@ -21,9 +21,66 @@ const LoginCard = ({ onSuccess, onSwitchToSignup }) => {
     try {
       const response = await api.post("/auth/login", { email, password });
       const { token, user } = response.data;
-      
+
       login(token, user);
-      
+
+      // ==================== ADMIN PENDING REQUESTS ALERT ====================
+      if (user.role === "admin") {
+        try {
+          const pendingResponse = await api.get(
+            "/admin/requests/pending-count",
+          );
+          const count = pendingResponse.data.count;
+          if (count > 0) {
+            alert(
+              `You have ${count} pending ownership request${count !== 1 ? "s" : ""}.`,
+            );
+          }
+        } catch (err) {
+          console.error("Failed to fetch pending count:", err);
+        }
+      }
+
+      // ==================== OWNER REQUEST STATUS ALERT ====================
+      if (user.role === "owner") {
+        try {
+          const requestsResponse = await api.get("/ownership/my-requests");
+          const requests = requestsResponse.data;
+          
+          // Only get requests that are NOT notified yet (using !r.notified to handle 0)
+          const unnotifiedRequests = requests.filter(
+            (r) =>
+              (r.status === "approved" || r.status === "rejected") &&
+              !r.notified
+          );
+          
+          const approvedCount = unnotifiedRequests.filter(
+            (r) => r.status === "approved"
+          ).length;
+          const rejectedCount = unnotifiedRequests.filter(
+            (r) => r.status === "rejected"
+          ).length;
+          
+          if (approvedCount > 0 || rejectedCount > 0) {
+            let message = "";
+            if (approvedCount > 0 && rejectedCount > 0) {
+              message = `You have ${approvedCount} approved and ${rejectedCount} rejected ownership requests.`;
+            } else if (approvedCount > 0) {
+              message = `You have ${approvedCount} approved ownership request${approvedCount !== 1 ? "s" : ""}.`;
+            } else if (rejectedCount > 0) {
+              message = `You have ${rejectedCount} rejected ownership request${rejectedCount !== 1 ? "s" : ""}.`;
+            }
+            alert(message);
+            
+            // Mark these requests as notified
+            const unnotifiedIds = unnotifiedRequests.map((r) => r.id);
+            await api.post("/ownership/mark-notified", { ids: unnotifiedIds });
+          }
+        } catch (err) {
+          console.error("Failed to fetch request status:", err);
+        }
+      }
+
       if (onSuccess) {
         onSuccess();
       } else {
@@ -84,9 +141,11 @@ const LoginCard = ({ onSuccess, onSwitchToSignup }) => {
 
       <p className="signup-link">
         Don't have an account?{" "}
-        <button 
+        <button
           className="link-button"
-          onClick={onSwitchToSignup || (() => window.location.href = "/signup")}
+          onClick={
+            onSwitchToSignup || (() => (window.location.href = "/signup"))
+          }
         >
           Sign up
         </button>

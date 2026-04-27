@@ -12,4 +12,8 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// ==================== CUSTOM API METHODS ====================
+export const getPendingCount = () => api.get('/admin/requests/pending-count');
+export const markNotified = (ids) => api.post('/ownership/mark-notified', { ids });
+
 export default api;

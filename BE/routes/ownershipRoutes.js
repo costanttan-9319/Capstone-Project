@@ -16,4 +16,7 @@ router.get('/pending', authMiddleware, adminMiddleware, AdminController.getPendi
 // This is the "One-Click" logic we just perfected
 router.put('/:id/status', authMiddleware, adminMiddleware, AdminController.approveRequest);
 
+// ==================== MARK REQUESTS AS NOTIFIED ====================
+router.post('/mark-notified', authMiddleware, OwnershipController.markNotified);
+
 export default router;

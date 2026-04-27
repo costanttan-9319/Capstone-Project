@@ -10,6 +10,7 @@ router.use(authMiddleware, adminMiddleware);
 
 router.get('/requests/pending', AdminController.getPendingRequests);
 router.get('/requests/all', AdminController.getAllRequests);
+router.get('/requests/pending-count', AdminController.getPendingCount);
 
 // SURGERY: Changed path from '/requests/:id/approve' to '/:id/status' 
 // to match the Frontend api.put(`/ownership/${requestId}/status`)

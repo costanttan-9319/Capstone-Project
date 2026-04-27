@@ -17,6 +17,8 @@ const AdminRequests = () => {
   const [showStoreDropdown, setShowStoreDropdown] = useState(false);
   const [storeIdMap, setStoreIdMap] = useState({});
   const [activeRequestId, setActiveRequestId] = useState(null);
+  // ==================== NEW STATE FOR PENDING COUNT ====================
+  const [pendingCount, setPendingCount] = useState(0);
 
   // ==================== FETCH PENDING REQUESTS ====================
   useEffect(() => {
@@ -51,6 +53,22 @@ const AdminRequests = () => {
     };
     fetchRequests();
   }, [user]);
+
+  // ==================== FETCH PENDING REQUESTS COUNT ====================
+  useEffect(() => {
+    if (!user || user.role !== "admin") return;
+
+    const fetchPendingCount = async () => {
+      try {
+        const response = await api.get("/admin/requests/pending-count");
+        setPendingCount(response.data.count);
+      } catch (error) {
+        console.error("🔴 Error fetching pending count:", error);
+      }
+    };
+    
+    fetchPendingCount();
+  }, [user, requests.length]);
 
   // ==================== FETCH ALL STORES FOR DROPDOWN ====================
   useEffect(() => {
@@ -127,6 +145,7 @@ const AdminRequests = () => {
       await api.put(`/ownership/${requestId}/status`, payload);
       console.log("✅ [handleApprove] Request approved successfully");
       setRequests(requests.filter((r) => r.id !== requestId));
+      setPendingCount(prev => prev - 1);
       alert("Request approved successfully!");
     } catch (error) {
       console.error("🔴 Error approving request:", error);
@@ -147,6 +166,7 @@ const AdminRequests = () => {
         admin_notes: rejectReason,
       });
       setRequests(requests.filter((r) => r.id !== selectedRequest.id));
+      setPendingCount(prev => prev - 1);
       setShowRejectModal(false);
       setRejectReason("");
       setSelectedRequest(null);
@@ -189,6 +209,21 @@ const AdminRequests = () => {
   return (
     <div className="admin-requests-container">
       <h1 className="admin-requests-title">Store Ownership Requests</h1>
+
+      {/* ==================== PENDING REQUESTS BANNER ==================== */}
+      {pendingCount > 0 && (
+        <div className="info-message" style={{
+          backgroundColor: '#fff3cd',
+          border: '1px solid #ffeeba',
+          color: '#856404',
+          padding: '12px 20px',
+          borderRadius: '4px',
+          marginBottom: '20px',
+          textAlign: 'center'
+        }}>
+          You have {pendingCount} pending ownership request{pendingCount !== 1 ? 's' : ''}.
+        </div>
+      )}
 
       {requests.length === 0 ? (
         <p className="no-requests">No pending requests.</p>

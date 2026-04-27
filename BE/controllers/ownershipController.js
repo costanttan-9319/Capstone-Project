@@ -89,62 +89,84 @@ export const OwnershipController = {
     }
   },
 
- // ==================== UPDATE REQUEST STATUS (ADMIN) ====================
-async updateRequestStatus(req, res) {
-  try {
-    const { id } = req.params;
-    const { status, admin_notes, store_id } = req.body;
+  // ==================== UPDATE REQUEST STATUS (ADMIN) ====================
+  async updateRequestStatus(req, res) {
+    try {
+      const { id } = req.params;
+      const { status, admin_notes, store_id } = req.body;
 
-    const request = await OwnershipRequest.getById(id);
-    if (!request) {
-      return res.status(404).json({ error: 'Request not found' });
-    }
-
-    const updated = await OwnershipRequest.updateStatus(id, status, admin_notes);
-    if (!updated) {
-      return res.status(404).json({ error: 'Failed to update request' });
-    }
-
-    if (status === 'approved') {
-      let finalStoreId = store_id;
-
-      if (!finalStoreId) {
-        const [storeResult] = await db.execute(
-          `INSERT INTO stores (name, country, address, operating) 
-           VALUES (?, 'Singapore', ?, 1)`,
-          [request.store_name, request.store_address]
-        );
-        finalStoreId = storeResult.insertId;
+      const request = await OwnershipRequest.getById(id);
+      if (!request) {
+        return res.status(404).json({ error: 'Request not found' });
       }
-      
-      await db.execute(
-        "UPDATE users SET role = 'owner' WHERE id = ?",
-        [request.user_id]
-      );
 
-      await db.execute(
-        "UPDATE stores SET owner_id = ? WHERE id = ?",
-        [request.user_id, finalStoreId]
-      );
+      const updated = await OwnershipRequest.updateStatus(id, status, admin_notes);
+      if (!updated) {
+        return res.status(404).json({ error: 'Failed to update request' });
+      }
 
-      const [existing] = await db.execute(
-        'SELECT id FROM store_owners WHERE user_id = ? AND store_id = ?',
-        [request.user_id, finalStoreId]
-      );
+      if (status === 'approved') {
+        let finalStoreId = store_id;
 
-      if (existing.length === 0) {
+        if (!finalStoreId) {
+          const [storeResult] = await db.execute(
+            `INSERT INTO stores (name, country, address, operating) 
+             VALUES (?, 'Singapore', ?, 1)`,
+            [request.store_name, request.store_address]
+          );
+          finalStoreId = storeResult.insertId;
+        }
+        
         await db.execute(
-          `INSERT INTO store_owners (user_id, store_id, is_approved, approved_at) 
-           VALUES (?, ?, TRUE, NOW())`,
+          "UPDATE users SET role = 'owner' WHERE id = ?",
+          [request.user_id]
+        );
+
+        await db.execute(
+          "UPDATE stores SET owner_id = ? WHERE id = ?",
           [request.user_id, finalStoreId]
         );
-      }
-    }
 
-    res.json({ message: `Request ${status} successfully and user promoted to owner` });
-  } catch (err) {
-    console.error('Update request error:', err);
-    res.status(500).json({ error: err.message });
-  }
-}
+        const [existing] = await db.execute(
+          'SELECT id FROM store_owners WHERE user_id = ? AND store_id = ?',
+          [request.user_id, finalStoreId]
+        );
+
+        if (existing.length === 0) {
+          await db.execute(
+            `INSERT INTO store_owners (user_id, store_id, is_approved, approved_at) 
+             VALUES (?, ?, TRUE, NOW())`,
+            [request.user_id, finalStoreId]
+          );
+        }
+      }
+
+      res.json({ message: `Request ${status} successfully and user promoted to owner` });
+    } catch (err) {
+      console.error('Update request error:', err);
+      res.status(500).json({ error: err.message });
+    }
+  },
+
+  // ==================== MARK REQUESTS AS NOTIFIED ====================
+  async markNotified(req, res) {
+    try {
+      const { ids } = req.body;
+      
+      if (!ids || ids.length === 0) {
+        return res.status(400).json({ error: 'No IDs provided' });
+      }
+      
+      const placeholders = ids.map(() => '?').join(',');
+      await db.execute(
+        `UPDATE ownership_requests SET notified = TRUE WHERE id IN (${placeholders})`,
+        ids
+      );
+      
+      res.json({ success: true, message: `${ids.length} requests marked as notified` });
+    } catch (err) {
+      console.error('Mark notified error:', err);
+      res.status(500).json({ error: err.message });
+    }
+  },
 };
