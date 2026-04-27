@@ -387,208 +387,212 @@ const StoreCard = ({ store, onEdit, onDelete, onToggleTopPick }) => {
     ));
   };
 
-  // ==================== RENDER ====================
-  console.log("🎨 Rendering StoreCard UI");
+ // ==================== RENDER ====================
+console.log("🎨 Rendering StoreCard UI");
 
-  return (
-    <>
-      <div
-        className={`store-card ${localTopPick ? "top-pick-card" : ""}`}
-        onDoubleClick={(e) => handleMemberAction(e, addLike)}
+return (
+  <>
+    <div
+      className={`store-card ${localTopPick ? "top-pick-card" : ""}`}
+      onDoubleClick={(e) => handleMemberAction(e, addLike)}
+    >
+      {/* IMAGE HEADER WITH CAROUSEL */}
+      <div 
+        className="card-image-container" 
+        style={{ position: "relative" }}
+        onDoubleClick={(e) => e.stopPropagation()}  // ← THIS LINE ADDED
       >
-        {/* IMAGE HEADER WITH CAROUSEL */}
-        <div className="card-image-container" style={{ position: "relative" }}>
-          <img
-            src={getCurrentImageUrl()}
-            alt={store.name}
-            className="store-card-image"
-            onError={handleImageError}
-            referrerPolicy="no-referrer"
-          />
+        <img
+          src={getCurrentImageUrl()}
+          alt={store.name}
+          className="store-card-image"
+          onError={handleImageError}
+          referrerPolicy="no-referrer"
+        />
 
-          {/* Carousel Navigation Arrows */}
-          {hasMultipleImages && !imgError && (
-            <>
-              <button
-                className="carousel-arrow left"
-                onClick={prevImage}
-                style={{
-                  position: "absolute",
-                  left: "8px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  backgroundColor: "rgba(0,0,0,0.5)",
-                  border: "none",
-                  borderRadius: "50%",
-                  width: "30px",
-                  height: "30px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                  color: "white",
-                  zIndex: 10,
-                  backdropFilter: "blur(4px)",
-                }}
-              >
-                <ChevronLeftIcon />
-              </button>
-              <button
-                className="carousel-arrow right"
-                onClick={nextImage}
-                style={{
-                  position: "absolute",
-                  right: "8px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  backgroundColor: "rgba(0,0,0,0.5)",
-                  border: "none",
-                  borderRadius: "50%",
-                  width: "30px",
-                  height: "30px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                  color: "white",
-                  zIndex: 10,
-                  backdropFilter: "blur(4px)",
-                }}
-              >
-                <ChevronRightIcon />
-              </button>
-            </>
-          )}
-
-          {/* Dot Indicators */}
-          {hasMultipleImages && !imgError && (
-            <div
-              className="carousel-dots"
+        {/* Carousel Navigation Arrows */}
+        {hasMultipleImages && !imgError && (
+          <>
+            <button
+              className="carousel-arrow left"
+              onClick={prevImage}
               style={{
                 position: "absolute",
-                bottom: "8px",
-                left: "50%",
-                transform: "translateX(-50%)",
+                left: "8px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                backgroundColor: "rgba(0,0,0,0.5)",
+                border: "none",
+                borderRadius: "50%",
+                width: "30px",
+                height: "30px",
                 display: "flex",
-                gap: "6px",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                color: "white",
                 zIndex: 10,
-                backgroundColor: "rgba(0,0,0,0.4)",
-                padding: "4px 8px",
-                borderRadius: "12px",
                 backdropFilter: "blur(4px)",
               }}
             >
-              {storeImages.map((_, idx) => (
-                <div
-                  key={idx}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    console.log("🎯 Dot clicked, index:", idx);
-                    setCurrentImageIndex(idx);
-                  }}
-                  style={{
-                    width: "6px",
-                    height: "6px",
-                    borderRadius: "50%",
-                    backgroundColor:
-                      idx === currentImageIndex
-                        ? "#d81473"
-                        : "rgba(255,255,255,0.7)",
-                    cursor: "pointer",
-                    transition: "all 0.2s",
-                  }}
-                />
-              ))}
-            </div>
-          )}
-
-          {/* ADMIN BUTTONS */}
-          {(isAdmin || isOwner) && (
-            <button
-              className="admin-btn edit"
-              onClick={(e) => {
-                e.stopPropagation();
-                console.log("✏️ Edit button clicked for store:", store.id);
-                if (onEdit) {
-                  onEdit(store);
-                } else {
-                  console.error("❌ onEdit prop is missing");
-                }
-              }}
-              style={{
-                position: "absolute",
-                top: "8px",
-                left: "8px",
-                backgroundColor: "#007bff",
-                border: "2px solid white",
-                borderRadius: "50%",
-                padding: "8px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                zIndex: 10,
-                boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-              }}
-            >
-              <EditIcon style={{ fontSize: "22px", color: "white" }} />
+              <ChevronLeftIcon />
             </button>
-          )}
-
-          {/* TOP PICK BUTTON (Admin only) - NOW USES localTopPick */}
-          {isAdmin && (
             <button
-              className="admin-btn top-pick"
-              onClick={handleToggleTopPick}
-              disabled={isTogglingTopPick}
+              className="carousel-arrow right"
+              onClick={nextImage}
               style={{
                 position: "absolute",
-                top: "8px",
-                left: "58px",
-                backgroundColor: localTopPick ? "#ffbe1b" : "#6c757d",
-                border: "2px solid white",
-                borderRadius: "50%",
-                padding: "8px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                zIndex: 10,
-                boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-              }}
-            >
-              {localTopPick ? (
-                <StarIcon style={{ fontSize: "22px", color: "white" }} />
-              ) : (
-                <StarBorderIcon style={{ fontSize: "22px", color: "white" }} />
-              )}
-            </button>
-          )}
-
-          {isAdmin && (
-            <button
-              className="admin-btn delete"
-              onClick={handleDelete}
-              style={{
-                position: "absolute",
-                top: "8px",
                 right: "8px",
-                backgroundColor: "#dc3545",
-                border: "2px solid white",
+                top: "50%",
+                transform: "translateY(-50%)",
+                backgroundColor: "rgba(0,0,0,0.5)",
+                border: "none",
                 borderRadius: "50%",
-                padding: "8px",
+                width: "30px",
+                height: "30px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 cursor: "pointer",
+                color: "white",
                 zIndex: 10,
-                boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+                backdropFilter: "blur(4px)",
               }}
             >
-              <DeleteIcon style={{ fontSize: "22px", color: "white" }} />
+              <ChevronRightIcon />
             </button>
-          )}
-        </div>
+          </>
+        )}
+
+        {/* Dot Indicators */}
+        {hasMultipleImages && !imgError && (
+          <div
+            className="carousel-dots"
+            style={{
+              position: "absolute",
+              bottom: "8px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              display: "flex",
+              gap: "6px",
+              zIndex: 10,
+              backgroundColor: "rgba(0,0,0,0.4)",
+              padding: "4px 8px",
+              borderRadius: "12px",
+              backdropFilter: "blur(4px)",
+            }}
+          >
+            {storeImages.map((_, idx) => (
+              <div
+                key={idx}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log("🎯 Dot clicked, index:", idx);
+                  setCurrentImageIndex(idx);
+                }}
+                style={{
+                  width: "6px",
+                  height: "6px",
+                  borderRadius: "50%",
+                  backgroundColor:
+                    idx === currentImageIndex
+                      ? "#d81473"
+                      : "rgba(255,255,255,0.7)",
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                }}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* ADMIN BUTTONS */}
+        {(isAdmin || isOwner) && (
+          <button
+            className="admin-btn edit"
+            onClick={(e) => {
+              e.stopPropagation();
+              console.log("✏️ Edit button clicked for store:", store.id);
+              if (onEdit) {
+                onEdit(store);
+              } else {
+                console.error("❌ onEdit prop is missing");
+              }
+            }}
+            style={{
+              position: "absolute",
+              top: "8px",
+              left: "8px",
+              backgroundColor: "#007bff",
+              border: "2px solid white",
+              borderRadius: "50%",
+              padding: "8px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              zIndex: 10,
+              boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+            }}
+          >
+            <EditIcon style={{ fontSize: "22px", color: "white" }} />
+          </button>
+        )}
+
+        {/* TOP PICK BUTTON (Admin only) - NOW USES localTopPick */}
+        {isAdmin && (
+          <button
+            className="admin-btn top-pick"
+            onClick={handleToggleTopPick}
+            disabled={isTogglingTopPick}
+            style={{
+              position: "absolute",
+              top: "8px",
+              left: "58px",
+              backgroundColor: localTopPick ? "#ffbe1b" : "#6c757d",
+              border: "2px solid white",
+              borderRadius: "50%",
+              padding: "8px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              zIndex: 10,
+              boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+            }}
+          >
+            {localTopPick ? (
+              <StarIcon style={{ fontSize: "22px", color: "white" }} />
+            ) : (
+              <StarBorderIcon style={{ fontSize: "22px", color: "white" }} />
+            )}
+          </button>
+        )}
+
+        {isAdmin && (
+          <button
+            className="admin-btn delete"
+            onClick={handleDelete}
+            style={{
+              position: "absolute",
+              top: "8px",
+              right: "8px",
+              backgroundColor: "#dc3545",
+              border: "2px solid white",
+              borderRadius: "50%",
+              padding: "8px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              zIndex: 10,
+              boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+            }}
+          >
+            <DeleteIcon style={{ fontSize: "22px", color: "white" }} />
+          </button>
+        )}
+      </div>
 
         <div className="store-card-content">
           {/* IDENTITY ROW */}
