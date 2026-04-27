@@ -46,21 +46,21 @@ const LoginCard = ({ onSuccess, onSwitchToSignup }) => {
         try {
           const requestsResponse = await api.get("/ownership/my-requests");
           const requests = requestsResponse.data;
-          
+
           // Only get requests that are NOT notified yet (using !r.notified to handle 0)
           const unnotifiedRequests = requests.filter(
             (r) =>
               (r.status === "approved" || r.status === "rejected") &&
-              !r.notified
+              !r.notified,
           );
-          
+
           const approvedCount = unnotifiedRequests.filter(
-            (r) => r.status === "approved"
+            (r) => r.status === "approved",
           ).length;
           const rejectedCount = unnotifiedRequests.filter(
-            (r) => r.status === "rejected"
+            (r) => r.status === "rejected",
           ).length;
-          
+
           if (approvedCount > 0 || rejectedCount > 0) {
             let message = "";
             if (approvedCount > 0 && rejectedCount > 0) {
@@ -71,7 +71,7 @@ const LoginCard = ({ onSuccess, onSwitchToSignup }) => {
               message = `You have ${rejectedCount} rejected ownership request${rejectedCount !== 1 ? "s" : ""}.`;
             }
             alert(message);
-            
+
             // Mark these requests as notified
             const unnotifiedIds = unnotifiedRequests.map((r) => r.id);
             await api.post("/ownership/mark-notified", { ids: unnotifiedIds });
@@ -83,9 +83,8 @@ const LoginCard = ({ onSuccess, onSwitchToSignup }) => {
 
       if (onSuccess) {
         onSuccess();
-      } else {
-        window.location.href = "/";
       }
+      window.location.href = "/";
     } catch (err) {
       setError(err.response?.data?.error || "Login failed. Please try again.");
     } finally {
