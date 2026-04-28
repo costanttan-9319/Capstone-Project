@@ -705,9 +705,7 @@ const StoreCard = ({ store, onEdit, onDelete, onToggleTopPick }) => {
                 />
               )}
 
-              <div className="icon-xhs" style={{ fontSize: "10px" }}>
-                小红书
-              </div>
+
             </div>
           </div>
 
