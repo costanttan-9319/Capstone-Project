@@ -57,7 +57,7 @@ bash in terminal: mysql -u root -p eatwhereapp_db < eatwhere_db.sql
 
 ## Default Admin Account (for testing)
 1. Clone the Repository. Open Terminal and bash:
- git clone [Your-GitHub-URL] cd EatWhereApp
+ git clone https://github.com/costanttan-9319/Capstone-Project cd EatWhereApp
 
 2. Backend Setup
 Navigate to the /EatwhereAppBE directory. Open terminal bash:
